@@ -78,10 +78,14 @@ src/
 ## 界面预览
 
 ### 首页
-![首页](./public/images/home-preview.png)
+
+![image](https://github.com/user-attachments/assets/5dab4fba-68a7-4793-b4c4-c3d6bb359369)
+![image](https://github.com/user-attachments/assets/34a61191-af6d-4b0c-a350-b28b1b55d6a9)
+
 
 ### 数据结构可视化
-![数据结构](./public/images/data-structure-preview.png)
+![image](https://github.com/user-attachments/assets/5cbf7fad-cfec-494d-abcd-440704e2e7a8)
+
 
 ### 算法动画
-![算法](./public/images/algorithm-preview.png)
+![image](https://github.com/user-attachments/assets/037d8f1b-58f9-486e-8c2a-17ac8fd8f3b5)
