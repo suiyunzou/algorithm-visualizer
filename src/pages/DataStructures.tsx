@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Route, Routes, useMatch, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { FiSearch, FiChevronRight, FiSettings, FiBook, FiCode, FiCpu } from 'react-icons/fi';
 import Array from '../components/DataStructures/Array';
-// Import other data structure components here
+import LinkedList from '../components/DataStructures/LinkedList';
 
 const DataStructures: React.FC = () => {
-  const match = useMatch('/data-structures/*');
-  const path = match ? match.pathname : '/data-structures';
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [showSettings, setShowSettings] = useState(false);
 
@@ -52,7 +51,7 @@ const DataStructures: React.FC = () => {
             {filteredDataStructures.map((ds) => (
               <li key={ds.path}>
                 <Link
-                  to={`${path}/${ds.path}`}
+                  to={ds.path}
                   className="block p-4 bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                 >
                   <div className="flex justify-between items-center">
@@ -113,6 +112,7 @@ const DataStructures: React.FC = () => {
               </div>
             } />
             <Route path="array" element={<Array />} />
+            <Route path="linked-list" element={<LinkedList />} />
             {/* Add routes for other data structures */}
           </Routes>
         </main>

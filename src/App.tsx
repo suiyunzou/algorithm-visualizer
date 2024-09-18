@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import DataStructures from './pages/DataStructures';
 import Algorithms from './pages/Algorithms';
+import About from './pages/About';
 
 const App: React.FC = () => {
   return (
@@ -13,7 +14,7 @@ const App: React.FC = () => {
           <Route index element={<Home />} />
           <Route path="data-structures/*" element={<DataStructures />} />
           <Route path="algorithms/*" element={<Algorithms />} />
-          {/* 重定向任何未匹配的路由到主页 */}
+          <Route path="about" element={<About />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

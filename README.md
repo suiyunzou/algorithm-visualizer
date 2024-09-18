@@ -85,3 +85,9 @@ src/
 
 ### 算法动画
 ![算法](./public/images/algorithm-preview.png)
+
+
+https://github.com/suiyunzou/algorithm-visualizer.git
+
+   git remote add origin https://github.com/suiyunzou/algorithm-visualizer.git
+   git remote set-url origin https://github.com/suiyunzou/algorithm-visualizer.git
