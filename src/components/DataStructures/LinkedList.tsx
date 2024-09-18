@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiPlus, FiMinus, FiRotateCcw, FiFastForward } from 'react-icons/fi';
+import CodeDisplay from '../CodeDisplay';
+import { linkedListCode } from '../../utils/dataStructureCode';
 
 type Node = {
   value: number;
@@ -9,10 +11,17 @@ type Node = {
 
 type Operation = 'insert' | 'delete' | 'custom';
 
+type AnimationStep = {
+  code: string[];
+  currentLine: number;
+  list: Node[];
+  pointer: number | null;
+};
+
 const LinkedList: React.FC = () => {
   const [list, setList] = useState<Node[]>([]);
   const [customInput, setCustomInput] = useState('');
-  const [animationSteps, setAnimationSteps] = useState<{ type: 'insert' | 'delete' | 'access', index: number, value?: number }[]>([]);
+  const [animationSteps, setAnimationSteps] = useState<AnimationStep[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -20,6 +29,7 @@ const LinkedList: React.FC = () => {
   const [message, setMessage] = useState('');
   const [lastOperation, setLastOperation] = useState<{ type: Operation, value?: number, index?: number }>({ type: 'custom' });
   const [previousList, setPreviousList] = useState<Node[]>([]);
+  const [pointer, setPointer] = useState<number | null>(null);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -40,7 +50,12 @@ const LinkedList: React.FC = () => {
     }
     setPreviousList(list);
     setList(newList);
-    setAnimationSteps(newList.map((node, index) => ({ type: 'insert', index, value: node.value })));
+    setAnimationSteps(newList.map((node, index) => ({
+      code: ['const newList = customInput.split(',').map(Number).filter(n => !isNaN(n)).map(value => ({ value, next: null }));', `newList[${index}] = { value: ${node.value}, next: null };`],
+      currentLine: 1,
+      list: newList.slice(0, index + 1),
+      pointer: null
+    })));
     setCurrentStep(0);
     setMessage('链表已更新');
     setLastOperation({ type: 'custom', value: undefined, index: undefined });
@@ -51,14 +66,22 @@ const LinkedList: React.FC = () => {
     if (!isNaN(value)) {
       const newNode = { value, next: null };
       setPreviousList(list);
-      setList(prev => {
-        const newList = [...prev, newNode];
-        if (prev.length > 0) {
-          prev[prev.length - 1].next = newNode;
-        }
-        return newList;
-      });
-      setAnimationSteps([{ type: 'insert', index: list.length, value }]);
+      const newList = [...list, newNode];
+      if (list.length > 0) {
+        list[list.length - 1].next = newNode;
+      }
+      setList(newList);
+      
+      const codeLines = linkedListCode.insert.split('\n');
+      const steps: AnimationStep[] = [
+        { code: codeLines, currentLine: 1, list: [...list], pointer: null },
+        { code: codeLines, currentLine: 2, list: [...list], pointer: null },
+        { code: codeLines, currentLine: 3, list: [...list], pointer: list.length - 1 },
+        { code: codeLines, currentLine: 7, list: [...list, newNode], pointer: list.length },
+        { code: codeLines, currentLine: 9, list: newList, pointer: null },
+      ];
+      
+      setAnimationSteps(steps);
       setCurrentStep(0);
       setOperationValue('');
       setMessage(`插入节点 ${value}`);
@@ -70,14 +93,22 @@ const LinkedList: React.FC = () => {
     const index = parseInt(operationValue);
     if (!isNaN(index) && index >= 0 && index < list.length) {
       setPreviousList(list);
-      setList(prev => {
-        const newList = prev.filter((_, i) => i !== index);
-        if (index < newList.length) {
-          newList[index - 1].next = newList[index];
-        }
-        return newList;
-      });
-      setAnimationSteps([{ type: 'delete', index }]);
+      const newList = list.filter((_, i) => i !== index);
+      if (index < newList.length) {
+        newList[index - 1].next = newList[index];
+      }
+      setList(newList);
+      
+      const codeLines = linkedListCode.delete.split('\n');
+      const steps: AnimationStep[] = [
+        { code: codeLines, currentLine: 1, list: [...list], pointer: null },
+        { code: codeLines, currentLine: 2, list: [...list], pointer: 0 },
+        { code: codeLines, currentLine: 6, list: [...list], pointer: index - 1 },
+        { code: codeLines, currentLine: 13, list: [...list], pointer: index },
+        { code: codeLines, currentLine: 16, list: newList, pointer: null },
+      ];
+      
+      setAnimationSteps(steps);
       setCurrentStep(0);
       setOperationValue('');
       setMessage(`删除索引 ${index} 的节点`);
@@ -112,6 +143,46 @@ const LinkedList: React.FC = () => {
     }
   };
 
+  const renderNodes = (nodes: Node[], currentPointer: number | null) => {
+    return (
+      <div className="flex items-center">
+        {nodes.map((node, index) => (
+          <motion.div
+            key={index}
+            className="flex items-center"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className={`relative w-16 h-16 flex flex-col items-center justify-center border-2 rounded-lg ${
+              currentPointer === index ? 'border-red-500' : 'border-blue-500'
+            } bg-white`}>
+              <div className="text-lg font-semibold">{node.value}</div>
+              <div className="text-xs">next</div>
+              {currentPointer === index && (
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-red-500">ptr</div>
+              )}
+            </div>
+            {index < nodes.length - 1 && (
+              <motion.svg
+                className="w-8 h-8 text-gray-400"
+                viewBox="0 0 24 24"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <path fill="currentColor" d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z" />
+              </motion.svg>
+            )}
+          </motion.div>
+        ))}
+        {nodes.length === 0 && <div className="text-gray-500">Empty list</div>}
+      </div>
+    );
+  };
+
   return (
     <div className="p-4 max-w-4xl mx-auto space-y-8">
       <h2 className="text-3xl font-bold text-center text-gray-800">链表可视化</h2>
@@ -121,27 +192,7 @@ const LinkedList: React.FC = () => {
         <h3 className="text-xl font-semibold mb-4 text-gray-700">当前链表</h3>
         <div className="flex flex-wrap gap-2 mb-4">
           <AnimatePresence>
-            {list.map((node, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: animationSteps[currentStep]?.index === index ? 1.2 : 1,
-                  backgroundColor: animationSteps[currentStep]?.index === index ? '#FEF3C7' : '#FFFFFF',
-                }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="w-12 h-12 flex items-center justify-center border rounded bg-blue-100 text-blue-800 font-semibold">
-                  {node.value}
-                </div>
-                {index < list.length - 1 && (
-                  <div className="w-6 h-1 bg-gray-400"></div>
-                )}
-              </motion.div>
-            ))}
+            {renderNodes(list, null)}
           </AnimatePresence>
         </div>
         <div className="flex gap-2">
@@ -182,6 +233,21 @@ const LinkedList: React.FC = () => {
       {/* 动画播放区域 */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h3 className="text-xl font-semibold mb-4 text-gray-700">动画播放</h3>
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <CodeDisplay 
+              code={animationSteps[currentStep]?.code || []}
+              currentLine={animationSteps[currentStep]?.currentLine || 0}
+            />
+          </div>
+          <div className="w-1/2 overflow-x-auto">
+            <div className="flex flex-wrap gap-2 mb-4">
+              <AnimatePresence>
+                {renderNodes(animationSteps[currentStep]?.list || [], animationSteps[currentStep]?.pointer)}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
         <div className="mt-4 flex justify-center items-center space-x-4">
           <button onClick={isPlaying ? pauseAnimation : playAnimation} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">
             {isPlaying ? <FiPause /> : <FiPlay />}
