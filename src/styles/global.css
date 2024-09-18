@@ -1,0 +1,107 @@
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #4a90e2;
+  color: white;
+  padding: 1rem;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.header nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.header nav ul li {
+  display: inline;
+  margin-right: 1rem;
+}
+
+.header nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar ul li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.visualization-canvas {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 300px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+.bar {
+  background-color: #4a90e2;
+  margin: 0 1px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  color: white;
+  font-size: 12px;
+}
+
+.bar.highlighted {
+  background-color: #ff6b6b;
+}
+
+.animation-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.button {
+  background-color: #4a90e2;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: #3a7bc8;
+}
