@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiPlus, FiMinus, FiRotateCcw, FiFastForward } from 'react-icons/fi';
 import CodeDisplay from '../CodeDisplay';
-import { linkedListCode } from '../../utils/dataStructureCode';
+
 
 type Node = {
   value: number;
@@ -16,6 +16,37 @@ type AnimationStep = {
   currentLine: number;
   list: Node[];
   pointer: number | null;
+};
+
+const linkedListCode = {
+  insert: `
+function insert(value) {
+  const newNode = { value, next: null };
+  if (!head) {
+    head = newNode;
+  } else {
+    let current = head;
+    while (current.next) {
+      current = current.next;
+    }
+    current.next = newNode;
+  }
+}`,
+  delete: `
+function deleteNode(index) {
+  if (index === 0) {
+    head = head.next;
+    return;
+  }
+  let current = head;
+  for (let i = 0; i < index - 1; i++) {
+    if (!current.next) return;
+    current = current.next;
+  }
+  if (current.next) {
+    current.next = current.next.next;
+  }
+}`
 };
 
 const LinkedList: React.FC = () => {
