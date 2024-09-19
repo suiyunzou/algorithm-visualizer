@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FiMenu, FiX, FiHome, FiCpu, FiCode, FiGithub } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiCpu, FiCode, FiGithub, FiBookOpen } from 'react-icons/fi';
 
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,25 +15,29 @@ const Layout: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className={`bg-indigo-700 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-20`}>
-        <nav className="space-y-3">
+      <aside className={`bg-indigo-700 text-white w-48 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-20`}>
+        <nav className="space-y-2 w-full px-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center space-x-3 px-4 py-2.5 rounded transition duration-200 ${
+              className={`flex items-center space-x-3 px-2 py-2 rounded transition duration-200 w-full ${
                 location.pathname === item.path ? 'bg-indigo-800' : 'hover:bg-indigo-600'
               }`}
             >
               {item.icon}
-              <span>{item.text}</span>
+              <span className="flex-grow text-sm">{item.text}</span>
             </Link>
           ))}
         </nav>
-        <div className="absolute bottom-4 left-4">
+        <div className="absolute bottom-12 left-4 space-y-2">
+          <a href="https://blog.csdn.net/lieyingJ?spm=1000.2115.3001.5343" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 text-white hover:text-indigo-200">
+            <FiBookOpen />
+            <span className="text-sm">博客</span>
+          </a>
           <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 text-white hover:text-indigo-200">
             <FiGithub />
-            <span>GitHub</span>
+            <span className="text-sm">GitHub</span>
           </a>
         </div>
       </aside>
