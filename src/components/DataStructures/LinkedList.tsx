@@ -1,69 +1,191 @@
-import React, { useState, useEffect } from 'react';
-import { LinkedListStructure } from '../../models/LinkedListStructure';
-import LinkedListVisualizer from './LinkedList/LinkedListVisualizer';
-import LinkedListOperations from './LinkedList/LinkedListOperations';
-import LinkedListComplexity from './LinkedList/LinkedListComplexity';
+import React, { useState } from 'react';
+import DataStructureLayout from '../Layout/DataStructureLayout';
+
+interface ListNode {
+  value: number;
+  next?: ListNode;
+}
 
 const LinkedList: React.FC = () => {
-  const [linkedListStructure] = useState(() => {
-    const initialList = new LinkedListStructure([10, 20, 30, 40, 50]);
-    return initialList;
-  });
-  
-  const [state, setState] = useState(() => linkedListStructure.getState());
+  const [head, setHead] = useState<ListNode | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [position, setPosition] = useState('');
+  const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    console.log('Subscribing to linked list structure updates');
-    const unsubscribe = linkedListStructure.subscribe((newState) => {
-      console.log('Linked list state updated:', newState);
-      setState(newState);
-    });
-    return () => {
-      console.log('Unsubscribing from linked list structure updates');
-      unsubscribe();
-    };
-  }, [linkedListStructure]);
-
-  const handlePrepend = async (value: any) => {
-    await linkedListStructure.prepend(value);
+  const getLength = (node: ListNode | null): number => {
+    let length = 0;
+    let current = node;
+    while (current) {
+      length++;
+      current = current.next;
+    }
+    return length;
   };
 
-  const handleAppend = async (value: any) => {
-    await linkedListStructure.append(value);
+  const insertAtHead = (value: number) => {
+    const newNode: ListNode = { value };
+    newNode.next = head;
+    setHead(newNode);
+    setHighlightIndex(0);
+    setTimeout(() => setHighlightIndex(null), 500);
   };
 
-  const handleInsert = async (value: any, index: number) => {
-    await linkedListStructure.insert(value, index);
+  const insertAtTail = (value: number) => {
+    const newNode: ListNode = { value };
+    if (!head) {
+      setHead(newNode);
+      return;
+    }
+    let current = head;
+    while (current.next) {
+      current = current.next;
+    }
+    current.next = newNode;
+    setHighlightIndex(getLength(head) - 1);
+    setTimeout(() => setHighlightIndex(null), 500);
   };
 
-  const handleDelete = async (index: number) => {
-    await linkedListStructure.delete(index);
+  const insertAtPosition = (value: number, pos: number) => {
+    if (pos < 0 || pos > getLength(head)) {
+      alert('无效的位置');
+      return;
+    }
+    if (pos === 0) {
+      insertAtHead(value);
+      return;
+    }
+    const newNode: ListNode = { value };
+    let current = head;
+    for (let i = 0; i < pos - 1; i++) {
+      current = current.next;
+    }
+    newNode.next = current.next;
+    current.next = newNode;
+    setHighlightIndex(pos);
+    setTimeout(() => setHighlightIndex(null), 500);
   };
 
-  const handleSearch = async (value: any) => {
-    await linkedListStructure.search(value);
+  const deleteAtPosition = (pos: number) => {
+    if (!head || pos < 0 || pos >= getLength(head)) {
+      alert('无效的位置');
+      return;
+    }
+    if (pos === 0) {
+      setHead(head.next);
+      return;
+    }
+    let current = head;
+    for (let i = 0; i < pos - 1; i++) {
+      current = current.next;
+    }
+    current.next = current.next?.next;
+    setHighlightIndex(pos);
+    setTimeout(() => setHighlightIndex(null), 500);
+  };
+
+  const renderList = () => {
+    const nodes: ListNode[] = [];
+    let current = head;
+    while (current) {
+      nodes.push(current);
+      current = current.next;
+    }
+
+    return (
+      <div className="flex items-center justify-center space-x-4 p-4">
+        {nodes.map((node, index) => (
+          <div key={index} className="flex items-center">
+            <div
+              className={`
+                flex items-center justify-center
+                w-12 h-12 rounded-full
+                ${highlightIndex === index ? 'bg-blue-100 border-blue-500' : 'bg-white border-gray-300'}
+                border-2 transition-colors duration-300
+              `}
+            >
+              {node.value}
+            </div>
+            {index < nodes.length - 1 && (
+              <div className="w-8 h-0.5 bg-gray-300 mx-2"></div>
+            )}
+          </div>
+        ))}
+        {nodes.length === 0 && (
+          <div className="text-gray-500">空链表</div>
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">链表可视化</h2>
-      
-      <LinkedListVisualizer 
-        nodes={state?.nodes || []}
-        highlightIndices={state?.highlightIndices || []}
-      />
-      
-      <LinkedListOperations
-        onPrepend={handlePrepend}
-        onAppend={handleAppend}
-        onInsert={handleInsert}
-        onDelete={handleDelete}
-        onSearch={handleSearch}
-        maxIndex={state?.nodes ? state.nodes.length : 0}
-      />
-      
-      <LinkedListComplexity />
-    </div>
+    <DataStructureLayout
+      title="链表"
+      visualization={renderList()}
+      operations={
+        <div className="flex flex-col space-y-4 p-4">
+          <div className="flex space-x-2">
+            <input
+              type="number"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="输入值"
+              className="border rounded px-2 py-1"
+            />
+            <input
+              type="number"
+              value={position}
+              onChange={(e) => setPosition(e.target.value)}
+              placeholder="位置"
+              className="border rounded px-2 py-1 w-20"
+            />
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => insertAtHead(parseInt(inputValue))}
+              className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              头部插入
+            </button>
+            <button
+              onClick={() => insertAtTail(parseInt(inputValue))}
+              className="px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              尾部插入
+            </button>
+            <button
+              onClick={() => insertAtPosition(parseInt(inputValue), parseInt(position))}
+              className="px-4 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
+            >
+              指定位置插入
+            </button>
+            <button
+              onClick={() => deleteAtPosition(parseInt(position))}
+              className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              删除位置
+            </button>
+          </div>
+        </div>
+      }
+      features={{
+        title: "链表特点",
+        items: [
+          "动态大小",
+          "不需要连续内存",
+          "插入和删除灵活",
+          "适用于频繁插入删除的场景"
+        ]
+      }}
+      complexity={{
+        title: "性能分析",
+        items: [
+          { operation: "头部插入/删除", timeComplexity: "O(1)" },
+          { operation: "尾部插入/删除", timeComplexity: "O(n)" },
+          { operation: "查找", timeComplexity: "O(n)" },
+          { operation: "按位置访问", timeComplexity: "O(n)" }
+        ]
+      }}
+    />
   );
 };
 

@@ -1,133 +1,140 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import './BinaryTreeVisualizer.css';
+
+interface TreeNode {
+  value: any;
+  left?: TreeNode;
+  right?: TreeNode;
+}
 
 interface BinaryTreeVisualizerProps {
-  treeArray: (number | null)[];
-  highlightNodes: number[];
-  maxDepth: number;
+  root: TreeNode | null;
+  highlightNodes: string[];
 }
 
 const BinaryTreeVisualizer: React.FC<BinaryTreeVisualizerProps> = ({
-  treeArray,
-  highlightNodes = [],
-  maxDepth
+  root,
+  highlightNodes = []
 }) => {
-  const getLevel = (index: number): number => Math.floor(Math.log2(index + 1));
-  const getLevelWidth = (level: number): number => Math.pow(2, level);
-  
-  // 计算节点的位置
-  const calculateNodePosition = (index: number) => {
-    const level = getLevel(index);
-    const levelWidth = getLevelWidth(level);
-    const position = index - (Math.pow(2, level) - 1);
-    const spacing = 60; // 节点之间的基本间距
-    const levelSpacing = spacing * Math.pow(2, maxDepth - level - 1); // 根据层级调整间距
-    
-    return {
-      left: `${position * levelSpacing + levelSpacing / 2}px`,
-      top: `${level * 80}px` // 垂直间距固定为 80px
-    };
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const getTreeDepth = (node: TreeNode | null): number => {
+    if (!node) return 0;
+    return 1 + Math.max(getTreeDepth(node.left), getTreeDepth(node.right));
   };
 
-  // 计算连接线的路径
-  const calculateLinePath = (parentIndex: number, childIndex: number) => {
-    const parent = calculateNodePosition(parentIndex);
-    const child = calculateNodePosition(childIndex);
+  const drawLine = (
+    container: HTMLElement,
+    parentX: number,
+    parentY: number,
+    childX: number,
+    childY: number
+  ) => {
+    const line = document.createElement('div');
+    line.className = 'line absolute bg-gray-300';
     
-    const parentX = parseFloat(parent.left);
-    const parentY = parseFloat(parent.top) + 20; // 节点半高
-    const childX = parseFloat(child.left);
-    const childY = parseFloat(child.top);
+    // 节点的尺寸
+    const nodeSize = 40;
     
-    return `M ${parentX} ${parentY} L ${childX} ${childY}`;
+    // 计算实际的连接点
+    const startX = parentX;
+    const startY = parentY + (nodeSize / 2); // 父节点底部中心
+    const endX = childX;
+    const endY = childY - (nodeSize / 2); // 子节点顶部中心
+    
+    // 计算线条长度和角度
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+    
+    // 设置线条样式
+    line.style.width = `${length}px`;
+    line.style.height = '2px';
+    line.style.transformOrigin = '0 0';
+    line.style.transform = `translate(${startX}px, ${startY}px) rotate(${angle}deg)`;
+    
+    container.appendChild(line);
   };
 
-  // 计算画布大小
-  const canvasWidth = Math.pow(2, maxDepth) * 60;
-  const canvasHeight = maxDepth * 80 + 40;
+  const renderNode = (
+    container: HTMLElement,
+    node: TreeNode,
+    x: number,
+    y: number,
+    offset: number,
+    path: string = '0'
+  ) => {
+    // 创建节点元素
+    const nodeDiv = document.createElement('div');
+    nodeDiv.className = `node absolute w-[40px] h-[40px] rounded-full border-2 
+      ${highlightNodes.includes(path) ? 'border-blue-500 bg-blue-100' : 'border-gray-300 bg-white'}
+      flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-gray-100
+      transform -translate-x-1/2 -translate-y-1/2`;
+    nodeDiv.style.left = `${x}px`;
+    nodeDiv.style.top = `${y}px`;
+    nodeDiv.textContent = String(node.value);
+    
+    // 添加提示框
+    nodeDiv.addEventListener('mouseenter', () => {
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip absolute bg-black bg-opacity-80 text-white px-2 py-1 rounded text-sm -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap';
+      tooltip.textContent = `Node Value: ${node.value}`;
+      nodeDiv.appendChild(tooltip);
+    });
+    
+    nodeDiv.addEventListener('mouseleave', () => {
+      const tooltip = nodeDiv.querySelector('.tooltip');
+      if (tooltip) tooltip.remove();
+    });
+    
+    container.appendChild(nodeDiv);
 
-  return (
-    <div className="relative overflow-auto border rounded-lg bg-gray-50 p-4" 
-         style={{ width: '100%', height: '500px' }}>
-      <div style={{ 
-        width: `${canvasWidth}px`, 
-        height: `${canvasHeight}px`, 
-        position: 'relative',
-        margin: '0 auto'
-      }}>
-        {/* 连接线 */}
-        <svg
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none'
-          }}
-        >
-          {treeArray.map((value, index) => {
-            if (value === null) return null;
-            const leftChildIndex = 2 * index + 1;
-            const rightChildIndex = 2 * index + 2;
-            
-            return (
-              <g key={`lines-${index}`}>
-                {leftChildIndex < treeArray.length && treeArray[leftChildIndex] !== null && (
-                  <path
-                    d={calculateLinePath(index, leftChildIndex)}
-                    stroke="#94a3b8"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                )}
-                {rightChildIndex < treeArray.length && treeArray[rightChildIndex] !== null && (
-                  <path
-                    d={calculateLinePath(index, rightChildIndex)}
-                    stroke="#94a3b8"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                )}
-              </g>
-            );
-          })}
-        </svg>
+    // 渲染子树
+    const verticalGap = 60; // 垂直间距
+    
+    if (node.left) {
+      const childX = x - offset;
+      const childY = y + verticalGap;
+      drawLine(container, x, y, childX, childY);
+      renderNode(container, node.left, childX, childY, offset / 2, path + 'L');
+    }
 
-        {/* 节点 */}
-        {treeArray.map((value, index) => {
-          if (value === null) return null;
-          const position = calculateNodePosition(index);
-          
-          return (
-            <div
-              key={`node-${index}`}
-              className={`
-                absolute w-10 h-10
-                flex items-center justify-center
-                rounded-full border-2
-                transition-all duration-300
-                ${highlightNodes.includes(index)
-                  ? 'border-blue-500 bg-blue-100 text-blue-700'
-                  : 'border-gray-300 bg-white text-gray-700'}
-              `}
-              style={{
-                left: position.left,
-                top: position.top,
-                transform: 'translate(-50%, 0)'
-              }}
-            >
-              {value}
-            </div>
-          );
-        })}
-      </div>
+    if (node.right) {
+      const childX = x + offset;
+      const childY = y + verticalGap;
+      drawLine(container, x, y, childX, childY);
+      renderNode(container, node.right, childX, childY, offset / 2, path + 'R');
+    }
+  };
 
-      {/* 空树提示 */}
-      {treeArray.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-          空二叉树
-        </div>
-      )}
+  useEffect(() => {
+    if (!containerRef.current || !root) return;
+
+    // 清除之前的内容
+    containerRef.current.innerHTML = '';
+
+    const treeDepth = getTreeDepth(root);
+    const containerWidth = Math.pow(2, treeDepth) * 60;
+    const startX = containerWidth / 2;
+    const startY = 50;
+    const initialOffset = containerWidth / 6;
+
+    renderNode(containerRef.current, root, startX, startY, initialOffset);
+  }, [root, highlightNodes]);
+
+  return root ? (
+    <div 
+      ref={containerRef}
+      className="relative border rounded-lg bg-white overflow-auto p-4 animate-fade-in"
+      style={{ 
+        height: '400px',
+        minWidth: '100%'
+      }}
+    />
+  ) : (
+    <div className="relative border rounded-lg bg-white overflow-auto p-4 flex items-center justify-center text-gray-500" style={{ height: '400px' }}>
+      空二叉树
     </div>
   );
 };

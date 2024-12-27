@@ -1,5 +1,4 @@
 import React from 'react';
-import { FiArrowDown } from 'react-icons/fi';
 
 interface StackVisualizerProps {
   items: any[];
@@ -10,60 +9,78 @@ interface StackVisualizerProps {
 const StackVisualizer: React.FC<StackVisualizerProps> = ({ items, highlightIndices = [], maxSize }) => {
   // 创建空槽位数组
   const emptySlots = Array(maxSize - items.length).fill(null);
+  
+  // 计算元素的大小和间距，根据总数动态调整
+  const totalItems = maxSize;
+  const baseSize = Math.min(40, Math.max(24, Math.floor(300 / totalItems))); // 基础大小在24-40之间动态调整
+  const spacing = Math.max(4, Math.min(8, Math.floor(baseSize / 5))); // 间距随元素大小调整
 
   return (
-    <div className="flex flex-col items-center justify-end space-y-2 min-h-[400px] my-4 p-4 border rounded-lg bg-gray-50">
-      {/* 显示空槽位 */}
-      {emptySlots.map((_, index) => (
-        <div
-          key={`empty-${index}`}
-          className="w-32 h-12 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center"
-        >
-          <span className="text-gray-400">Empty</span>
-        </div>
-      ))}
+    <div className="flex flex-col items-center p-4 border rounded-lg bg-gray-50">
+      <div className="text-sm text-gray-500 mb-2">栈容量: {maxSize}</div>
       
-      {/* 显示栈中的元素 */}
-      {[...items].reverse().map((item, index) => {
-        const actualIndex = items.length - 1 - index;
-        return (
-          <div key={`item-${actualIndex}`} className="relative">
-            {actualIndex < items.length - 1 && (
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                <FiArrowDown className="text-blue-500" />
-              </div>
-            )}
+      {/* 栈的主体部分，使用动态大小 */}
+      <div className="flex flex-col items-center" style={{ gap: `${spacing}px` }}>
+        {/* 显示空槽位 */}
+        {emptySlots.map((_, index) => (
+          <div
+            key={`empty-${index}`}
+            style={{
+              width: `${baseSize * 2}px`,
+              height: `${baseSize}px`
+            }}
+            className="border-2 border-dashed border-gray-300 rounded-md bg-gray-50 flex items-center justify-center"
+          >
+            <span className="text-gray-400 text-xs">Empty</span>
+          </div>
+        ))}
+
+        {/* 显示栈中的元素，从栈底到栈顶 */}
+        {[...items].reverse().map((item, idx) => {
+          const index = items.length - 1 - idx; // 计算实际索引
+          return (
             <div
+              key={index}
+              style={{
+                width: `${baseSize * 2}px`,
+                height: `${baseSize}px`
+              }}
               className={`
-                w-32 h-12
-                border-2 rounded-lg
-                flex items-center justify-center
-                ${highlightIndices.includes(actualIndex)
+                flex flex-col items-center justify-center
+                border-2 rounded-md
+                ${highlightIndices.includes(index)
                   ? 'border-blue-500 bg-blue-100'
                   : 'border-gray-300 bg-white'}
                 transition-all duration-300
+                ${index === items.length - 1 ? 'border-green-500' : ''}
               `}
             >
-              <span className="font-bold">{item}</span>
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-gray-500" style={{ fontSize: `${Math.max(10, baseSize / 3)}px` }}>
+                  {index === items.length - 1 ? 'Top' : `${index}`}
+                </span>
+                <span className="font-bold" style={{ fontSize: `${Math.max(12, baseSize / 2)}px` }}>
+                  {item.value}
+                </span>
+              </div>
             </div>
-          </div>
-        );
-      })}
-      
-      {/* 底部基座 */}
-      <div className="w-40 h-2 bg-gray-400 rounded-lg" />
-      
+          );
+        })}
+      </div>
+
+      {/* 栈底部基座 */}
+      <div className="mt-4 border-t-4 border-gray-300" style={{ width: `${baseSize * 2 + 20}px` }}></div>
+
+      {/* 空栈提示 */}
+      {items.length === 0 && (
+        <div className="text-gray-500 text-center mt-4">
+          空栈
+        </div>
+      )}
+
       {/* 栈的状态信息 */}
-      <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
-          容量: {items.length} / {maxSize}
-        </p>
-        {items.length === 0 && (
-          <p className="text-sm text-gray-500 mt-2">栈为空</p>
-        )}
-        {items.length === maxSize && (
-          <p className="text-sm text-red-500 mt-2">栈已满</p>
-        )}
+      <div className="mt-4 text-sm text-gray-500">
+        元素个数: {items.length} / {maxSize}
       </div>
     </div>
   );

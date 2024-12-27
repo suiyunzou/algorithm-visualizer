@@ -1,67 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import { StackStructure } from '../../models/StackStructure';
+import React, { useState } from 'react';
+import DataStructureLayout from '../Layout/DataStructureLayout';
 import StackVisualizer from './Stack/StackVisualizer';
-import StackOperations from './Stack/StackOperations';
-import StackComplexity from './Stack/StackComplexity';
+
+interface StackItem {
+  value: number;
+}
 
 const Stack: React.FC = () => {
-  const [stackStructure] = useState(() => {
-    // 创建一个最大容量为 8 的栈，初始包含 3 个元素
-    return new StackStructure([10, 20, 30], 8);
-  });
-  
-  const [state, setState] = useState(() => stackStructure.getState());
+  const maxSize = 10; // 设置栈的最大容量
+  const [items, setItems] = useState<StackItem[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [highlightIndices, setHighlightIndices] = useState<number[]>([]);
 
-  useEffect(() => {
-    console.log('Subscribing to stack structure updates');
-    const unsubscribe = stackStructure.subscribe((newState) => {
-      console.log('Stack state updated:', newState);
-      setState(newState);
-    });
-    return () => {
-      console.log('Unsubscribing from stack structure updates');
-      unsubscribe();
-    };
-  }, [stackStructure]);
-
-  const handlePush = async (value: any) => {
-    return await stackStructure.push(value);
+  const handlePush = () => {
+    const value = parseInt(inputValue);
+    if (isNaN(value)) {
+      alert('请输入有效数字');
+      return;
+    }
+    if (items.length >= maxSize) {
+      alert('栈已满');
+      return;
+    }
+    setItems([...items, { value }]);
+    setInputValue('');
+    setHighlightIndices([items.length]); // 高亮新添加的元素
+    setTimeout(() => setHighlightIndices([]), 500); // 500ms 后取消高亮
   };
 
-  const handlePop = async () => {
-    return await stackStructure.pop();
+  const handlePop = () => {
+    if (items.length === 0) {
+      alert('栈为空');
+      return;
+    }
+    setHighlightIndices([items.length - 1]); // 高亮要移除的元素
+    setTimeout(() => {
+      setItems(items.slice(0, -1));
+      setHighlightIndices([]);
+    }, 500);
   };
 
-  const handlePeek = async () => {
-    return await stackStructure.peek();
+  const handlePeek = () => {
+    if (items.length === 0) {
+      alert('栈为空');
+      return;
+    }
+    setHighlightIndices([items.length - 1]); // 高亮栈顶元素
+    setTimeout(() => setHighlightIndices([]), 500); // 500ms 后取消高亮
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">栈可视化</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <StackVisualizer 
-            items={state?.items || []}
-            highlightIndices={state?.highlightIndices || []}
-            maxSize={stackStructure.getMaxSize()}
+    <DataStructureLayout
+      title="栈"
+      visualization={
+        <StackVisualizer 
+          items={items}
+          highlightIndices={highlightIndices}
+          maxSize={maxSize}
+        />
+      }
+      operations={
+        <div className="flex items-center gap-4 w-full max-w-2xl justify-center p-4">
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="输入值"
+            className="border rounded px-3 py-1 w-28"
+            onKeyPress={(e) => e.key === 'Enter' && handlePush()}
           />
+          <button
+            onClick={handlePush}
+            className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            入栈 (Push)
+          </button>
+          <button
+            onClick={handlePop}
+            className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            出栈 (Pop)
+          </button>
+          <button
+            onClick={handlePeek}
+            className="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            查看栈顶 (Peek)
+          </button>
         </div>
-        
-        <div className="space-y-6">
-          <StackOperations
-            onPush={handlePush}
-            onPop={handlePop}
-            onPeek={handlePeek}
-            isFull={stackStructure.isFull()}
-            isEmpty={stackStructure.isEmpty()}
-          />
-          
-          <StackComplexity />
-        </div>
-      </div>
-    </div>
+      }
+      features={{
+        title: "栈特点",
+        items: [
+          "后进先出 (LIFO)",
+          "只能从顶部添加或删除元素",
+          "可以快速查看顶部元素",
+          "适用于函数调用、表达式求值等"
+        ]
+      }}
+      complexity={{
+        title: "性能分析",
+        items: [
+          { operation: "压栈", timeComplexity: "O(1)" },
+          { operation: "出栈", timeComplexity: "O(1)" },
+          { operation: "查看栈顶", timeComplexity: "O(1)" },
+          { operation: "判空", timeComplexity: "O(1)" }
+        ]
+      }}
+    />
   );
 };
 

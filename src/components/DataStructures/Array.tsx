@@ -9,7 +9,7 @@ const Array: React.FC = () => {
     const initialArray = new ArrayStructure([10, 20, 30, 40, 50]);
     return initialArray;
   });
-  
+
   const [state, setState] = useState(() => arrayStructure.getState());
 
   useEffect(() => {
@@ -58,43 +58,63 @@ const Array: React.FC = () => {
   const stats = getArrayStats();
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">数组可视化</h2>
-      
-      <ArrayVisualizer 
-        data={state?.data || []}
-        highlightIndices={state?.highlightIndices || []}
-      />
-      
-      <div className="grid grid-cols-4 gap-4 mb-6 text-center">
-        <div className="bg-blue-50 p-3 rounded-lg">
-          <div className="text-sm text-gray-600">总和</div>
-          <div className="font-bold">{stats.sum}</div>
-        </div>
-        <div className="bg-green-50 p-3 rounded-lg">
-          <div className="text-sm text-gray-600">平均值</div>
-          <div className="font-bold">{stats.avg.toFixed(2)}</div>
-        </div>
-        <div className="bg-yellow-50 p-3 rounded-lg">
-          <div className="text-sm text-gray-600">最大值</div>
-          <div className="font-bold">{stats.max}</div>
-        </div>
-        <div className="bg-red-50 p-3 rounded-lg">
-          <div className="text-sm text-gray-600">最小值</div>
-          <div className="font-bold">{stats.min}</div>
+    <div className="h-full flex flex-col p-6 space-y-6">
+      {/* 可视化区域 */}
+      <div className="flex-1 bg-white rounded-lg shadow-sm p-6">
+        <div className="h-full flex items-center justify-center">
+          <ArrayVisualizer data={state?.data || []} highlightIndices={state?.highlightIndices || []} />
         </div>
       </div>
-      
-      <ArrayOperations
-        onInsert={handleInsert}
-        onDelete={handleDelete}
-        onSearch={handleSearch}
-        onSort={handleSort}
-        onReverse={handleReverse}
-        maxIndex={state?.data ? state.data.length : 0}
-      />
-      
-      <ArrayComplexity />
+
+      {/* 操作区域 */}
+      <div className="flex space-x-4">
+        <div className="flex-1 bg-white rounded-lg shadow-sm p-6">
+          <h3 className="text-lg font-medium mb-4">操作</h3>
+          <ArrayOperations
+            onInsert={handleInsert}
+            onDelete={handleDelete}
+            onSearch={handleSearch}
+            onSort={handleSort}
+            onReverse={handleReverse}
+            maxIndex={state?.data ? state.data.length : 0}
+          />
+        </div>
+      </div>
+
+      {/* 信息卡片区域 */}
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-blue-50 rounded-lg p-6">
+          <h3 className="text-lg font-medium mb-4">数组特点</h3>
+          <ul className="space-y-2 text-gray-600">
+            <li>• 连续的内存空间</li>
+            <li>• 支持随机访问</li>
+            <li>• 插入和删除需要移动元素</li>
+            <li>• 大小固定</li>
+          </ul>
+        </div>
+        <div className="bg-yellow-50 rounded-lg p-6">
+          <h3 className="text-lg font-medium mb-4">性能分析</h3>
+          <ArrayComplexity />
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>访问：</span>
+              <span className="font-mono">O(1)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>搜索：</span>
+              <span className="font-mono">O(n)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>插入：</span>
+              <span className="font-mono">O(n)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>删除：</span>
+              <span className="font-mono">O(n)</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

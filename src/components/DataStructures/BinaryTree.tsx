@@ -1,81 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import { BinaryTreeStructure } from '../../models/BinaryTreeStructure';
+import React, { useState } from 'react';
+import DataStructureLayout from '../Layout/DataStructureLayout';
 import BinaryTreeVisualizer from './BinaryTree/BinaryTreeVisualizer';
 import BinaryTreeOperations from './BinaryTree/BinaryTreeOperations';
-import BinaryTreeComplexity from './BinaryTree/BinaryTreeComplexity';
+
+interface TreeNode {
+  value: any;
+  left?: TreeNode;
+  right?: TreeNode;
+}
 
 const BinaryTree: React.FC = () => {
-  const [treeStructure] = useState(() => {
-    // 创建一个初始包含一些节点的二叉树
-    return new BinaryTreeStructure([50, 30, 70, 20, 40, 60, 80]);
+  const [root, setRoot] = useState<TreeNode>({
+    value: 1,
+    left: {
+      value: 2,
+      left: { value: 4 },
+      right: { value: 5 }
+    },
+    right: {
+      value: 3,
+      left: { value: 6 },
+      right: { value: 7 }
+    }
   });
-  
-  const [state, setState] = useState(() => treeStructure.getState());
+  const [highlightNodes, setHighlightNodes] = useState<string[]>([]);
 
-  useEffect(() => {
-    console.log('Subscribing to binary tree structure updates');
-    const unsubscribe = treeStructure.subscribe((newState) => {
-      console.log('Binary tree state updated:', newState);
-      setState(newState);
-    });
-    return () => {
-      console.log('Unsubscribing from binary tree structure updates');
-      unsubscribe();
+  // 插入节点
+  const handleInsert = async (value: number): Promise<void> => {
+    const insertNode = (node: TreeNode | undefined, newValue: number): TreeNode => {
+      if (!node) {
+        return { value: newValue };
+      }
+      if (newValue < node.value) {
+        return { ...node, left: insertNode(node.left, newValue) };
+      }
+      return { ...node, right: insertNode(node.right, newValue) };
     };
-  }, [treeStructure]);
-
-  const handleInsert = async (value: number) => {
-    await treeStructure.insert(value);
+    setRoot(insertNode(root, value));
   };
 
-  const handleDelete = async (value: number) => {
-    await treeStructure.delete(value);
+  // 删除节点
+  const handleDelete = async (value: number): Promise<void> => {
+    const findMin = (node: TreeNode): number => {
+      let current = node;
+      while (current.left) {
+        current = current.left;
+      }
+      return current.value;
+    };
+
+    const deleteNode = (node: TreeNode | undefined, value: number): TreeNode | undefined => {
+      if (!node) return undefined;
+
+      if (value < node.value) {
+        return { ...node, left: deleteNode(node.left, value) };
+      }
+      if (value > node.value) {
+        return { ...node, right: deleteNode(node.right, value) };
+      }
+
+      // 找到要删除的节点
+      if (!node.left) return node.right;
+      if (!node.right) return node.left;
+
+      // 有两个子节点的情况
+      const minValue = findMin(node.right);
+      return {
+        ...node,
+        value: minValue,
+        right: deleteNode(node.right, minValue)
+      };
+    };
+
+    setRoot(deleteNode(root, value) || null);
   };
 
-  const handleSearch = async (value: number) => {
-    return await treeStructure.search(value);
+  // 搜索节点
+  const handleSearch = async (value: number): Promise<boolean> => {
+    const searchNode = (node: TreeNode | undefined, value: number): boolean => {
+      if (!node) return false;
+      if (node.value === value) {
+        setHighlightNodes(['0']); // 高亮找到的节点
+        setTimeout(() => setHighlightNodes([]), 2000);
+        return true;
+      }
+      if (value < node.value) {
+        return searchNode(node.left, value);
+      }
+      return searchNode(node.right, value);
+    };
+
+    return searchNode(root, value);
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">二叉搜索树可视化</h2>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="lg:col-span-2">
-          <BinaryTreeVisualizer 
-            treeArray={state?.treeArray || []}
-            highlightNodes={state?.highlightNodes || []}
-            maxDepth={state?.maxDepth || 0}
-          />
-        </div>
-        
-        <div>
-          <BinaryTreeOperations
-            onInsert={handleInsert}
-            onDelete={handleDelete}
-            onSearch={handleSearch}
-          />
-        </div>
-        
-        <div>
-          <BinaryTreeComplexity />
-        </div>
-      </div>
-
-      {/* 树的统计信息 */}
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <span className="text-gray-600">节点数量:</span>
-            <span className="ml-2 font-semibold">{treeStructure.getSize()}</span>
-          </div>
-          <div className="text-center">
-            <span className="text-gray-600">树的深度:</span>
-            <span className="ml-2 font-semibold">{treeStructure.getDepth()}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <DataStructureLayout
+      title="二叉树"
+      visualization={
+        <BinaryTreeVisualizer 
+          root={root}
+          highlightNodes={highlightNodes}
+        />
+      }
+      operations={
+        <BinaryTreeOperations 
+          onInsert={handleInsert}
+          onDelete={handleDelete}
+          onSearch={handleSearch}
+        />
+      }
+      features={{
+        title: "二叉树特点",
+        items: [
+          "每个节点最多有两个子节点",
+          "具有层级结构",
+          "可以是空树",
+          "适用于表示层级关系数据"
+        ]
+      }}
+      complexity={{
+        title: "性能分析",
+        items: [
+          { operation: "查找", timeComplexity: "O(h)" },
+          { operation: "插入", timeComplexity: "O(h)" },
+          { operation: "删除", timeComplexity: "O(h)" },
+          { operation: "遍历", timeComplexity: "O(n)" }
+        ]
+      }}
+    />
   );
 };
 

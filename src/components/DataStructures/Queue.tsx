@@ -1,68 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import { QueueStructure } from '../../models/QueueStructure';
+import React, { useState } from 'react';
+import DataStructureLayout from '../Layout/DataStructureLayout';
 import QueueVisualizer from './Queue/QueueVisualizer';
-import QueueOperations from './Queue/QueueOperations';
-import QueueComplexity from './Queue/QueueComplexity';
+
+interface QueueItem {
+  value: number;
+}
 
 const Queue: React.FC = () => {
-  const [queueStructure] = useState(() => {
-    // 创建一个最大容量为 8 的队列
-    return new QueueStructure(8);
-  });
-  
-  const [state, setState] = useState(() => queueStructure.getState());
+  const maxSize = 10; // 设置队列的最大容量
+  const [items, setItems] = useState<QueueItem[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [highlightIndices, setHighlightIndices] = useState<number[]>([]);
 
-  useEffect(() => {
-    console.log('Subscribing to queue structure updates');
-    const unsubscribe = queueStructure.subscribe((newState) => {
-      console.log('Queue state updated:', newState);
-      setState(newState);
-    });
-    return () => {
-      console.log('Unsubscribing from queue structure updates');
-      unsubscribe();
-    };
-  }, [queueStructure]);
-
-  const handleEnqueue = async (value: any) => {
-    return await queueStructure.enqueue(value);
+  const handleEnqueue = () => {
+    const value = parseInt(inputValue);
+    if (isNaN(value)) {
+      alert('请输入有效数字');
+      return;
+    }
+    if (items.length >= maxSize) {
+      alert('队列已满');
+      return;
+    }
+    setItems([...items, { value }]);
+    setInputValue('');
+    setHighlightIndices([items.length]); // 高亮新添加的元素
+    setTimeout(() => setHighlightIndices([]), 500); // 500ms 后取消高亮
   };
 
-  const handleDequeue = async () => {
-    return await queueStructure.dequeue();
+  const handleDequeue = () => {
+    if (items.length === 0) {
+      alert('队列为空');
+      return;
+    }
+    setHighlightIndices([0]); // 高亮要移除的元素
+    setTimeout(() => {
+      setItems(items.slice(1));
+      setHighlightIndices([]);
+    }, 500);
   };
 
-  const handlePeek = async () => {
-    return await queueStructure.peek();
+  const handlePeek = () => {
+    if (items.length === 0) {
+      alert('队列为空');
+      return;
+    }
+    setHighlightIndices([0]); // 高亮队首元素
+    setTimeout(() => setHighlightIndices([]), 500); // 500ms 后取消高亮
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">队列可视化</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <QueueVisualizer 
-            items={state?.items || []}
-            highlightIndices={state?.highlightIndices || []}
-            front={state?.front || -1}
-            rear={state?.rear || -1}
+    <DataStructureLayout
+      title="队列"
+      visualization={
+        <QueueVisualizer 
+          items={items}
+          highlightIndices={highlightIndices}
+          maxSize={maxSize}
+        />
+      }
+      operations={
+        <div className="flex items-center gap-4 w-full max-w-2xl justify-center p-4">
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="输入值"
+            className="border rounded px-3 py-1 w-28"
+            onKeyPress={(e) => e.key === 'Enter' && handleEnqueue()}
           />
+          <button
+            onClick={handleEnqueue}
+            className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            入队 (Enqueue)
+          </button>
+          <button
+            onClick={handleDequeue}
+            className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            出队 (Dequeue)
+          </button>
+          <button
+            onClick={handlePeek}
+            className="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            查看队首 (Peek)
+          </button>
         </div>
-        
-        <div className="space-y-6">
-          <QueueOperations
-            onEnqueue={handleEnqueue}
-            onDequeue={handleDequeue}
-            onPeek={handlePeek}
-            isFull={queueStructure.isFull()}
-            isEmpty={queueStructure.isEmpty()}
-          />
-          
-          <QueueComplexity />
-        </div>
-      </div>
-    </div>
+      }
+      features={{
+        title: "队列特点",
+        items: [
+          "先进先出 (FIFO)",
+          "只能从队尾添加元素",
+          "只能从队首删除元素",
+          "适用于任务调度、消息队列等"
+        ]
+      }}
+      complexity={{
+        title: "性能分析",
+        items: [
+          { operation: "入队", timeComplexity: "O(1)" },
+          { operation: "出队", timeComplexity: "O(1)" },
+          { operation: "查看队首", timeComplexity: "O(1)" },
+          { operation: "判空", timeComplexity: "O(1)" }
+        ]
+      }}
+    />
   );
 };
 

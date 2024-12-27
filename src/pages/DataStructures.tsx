@@ -1,94 +1,124 @@
-import React, { useState } from 'react';
-import { Route, Routes, useMatch, Link, Outlet } from 'react-router-dom';
-import { FiSearch, FiChevronRight, FiSettings, FiBook, FiCode, FiCpu } from 'react-icons/fi';
+import React from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { FiGrid, FiLink, FiLayers, FiList, FiGitBranch, FiShare2, FiHash } from 'react-icons/fi';
 import Array from '../components/DataStructures/Array';
 
 const DataStructures: React.FC = () => {
-  const match = useMatch('/data-structures/*');
-  const path = match ? match.pathname : '/data-structures';
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
-
-  const dataStructures = [
-    { name: '数组', path: 'array', description: '在连续内存位置存储的元素集合', icon: <FiCpu /> },
-    { name: '链表', path: 'linked-list', description: '元素的线性集合，其顺序不由物理内存位置给出', icon: <FiCode /> },
-    { name: '栈', path: 'stack', description: '后进先出（LIFO）数据结构', icon: <FiBook /> },
-    { name: '队列', path: 'queue', description: '先进先出（FIFO）数据结构', icon: <FiCode /> },
-    { name: '二叉树', path: 'binary-tree', description: '每个节点最多有两个子节点的树数据结构', icon: <FiCpu /> },
-    { name: '图', path: 'graph', description: '由节点和边组成的非线性数据结构', icon: <FiBook /> },
-    { name: '哈希表', path: 'hash-table', description: '实现关联数组抽象数据类型的数据结构', icon: <FiCpu /> },
-  ];
-
-  const filteredDataStructures = dataStructures.filter(ds => 
-    ds.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ds.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 px-8 shadow-lg">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-4xl font-bold">数据结构探索器</h1>
-          <nav>
-            <Link to="/" className="text-white hover:text-blue-200 mr-6 text-lg">首页</Link>
-            <Link to="/algorithms" className="text-white hover:text-blue-200 text-lg">算法</Link>
-          </nav>
-        </div>
-      </header>
-      <div className="flex flex-1 overflow-hidden container mx-auto mt-8">
-        <nav className="w-1/3 bg-white p-6 overflow-y-auto shadow-xl rounded-lg mr-8">
-          <div className="mb-6 relative">
-            <FiSearch className="absolute left-3 top-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="搜索数据结构..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <ul className="space-y-4">
-            {filteredDataStructures.map((ds) => (
-              <li key={ds.path}>
-                <Link
-                  to={ds.path}
-                  className="block p-4 bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-medium text-blue-600 flex items-center">
-                      {ds.icon}
-                      <span className="ml-2">{ds.name}</span>
-                    </span>
-                    <FiChevronRight className="text-gray-400" />
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2">{ds.description}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <main className="flex-1 bg-white p-8 overflow-y-auto relative shadow-xl rounded-lg">
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="absolute top-4 right-4 p-2 bg-blue-100 rounded-full text-blue-600 hover:bg-blue-200 transition-colors duration-200"
+    <div className="h-full flex">
+      {/* 左侧导航 */}
+      <div className="w-72 bg-white shadow-sm p-4 overflow-y-auto">
+        <div className="space-y-4">
+          <Link 
+            to="/data-structures/array" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
           >
-            <FiSettings />
-          </button>
-          {showSettings && (
-            <div className="absolute top-16 right-4 w-64 bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-              <h3 className="text-lg font-semibold mb-4 text-blue-600">设置</h3>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">动画速度</label>
-                <input type="range" min="1" max="10" className="w-full" />
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiGrid size={20} />
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">数组大小</label>
-                <input type="number" min="1" max="100" className="w-full border rounded p-1" />
+              <div>
+                <h3 className="font-medium">数组</h3>
+                <p className="text-sm text-gray-500">在连续内存位置存储的元素集合</p>
               </div>
             </div>
-          )}
-          <Outlet />
-        </main>
+          </Link>
+
+          <Link 
+            to="/data-structures/linked-list" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiLink size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium">链表</h3>
+                <p className="text-sm text-gray-500">元素的链性集合，其顺序不由物理内存位置给出</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link 
+            to="/data-structures/stack" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiLayers size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium">栈</h3>
+                <p className="text-sm text-gray-500">后进先出 (LIFO) 数据结构</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link 
+            to="/data-structures/queue" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiList size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium">队列</h3>
+                <p className="text-sm text-gray-500">先进先出 (FIFO) 数据结构</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link 
+            to="/data-structures/binary-tree" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiGitBranch size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium">二叉树</h3>
+                <p className="text-sm text-gray-500">每个节点最多有两个子节点的树数据结构</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link 
+            to="/data-structures/graph" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiShare2 size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium">图</h3>
+                <p className="text-sm text-gray-500">由节点和边组成的非线性数据结构</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link 
+            to="/data-structures/hash-table" 
+            className="block p-3 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-indigo-600">
+                <FiHash size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium">哈希表</h3>
+                <p className="text-sm text-gray-500">实现关联数组抽象数据类型的数据结构</p>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* 右侧内容区域 */}
+      <div className="flex-1 overflow-auto">
+        <Outlet />
       </div>
     </div>
   );
