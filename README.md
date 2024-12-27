@@ -9,6 +9,23 @@
 - 详细的解释和复杂度分析
 - 支持自定义输入，实现动手学习
 - 响应式设计，适配多种设备
+- AI 助手功能，提供智能问答支持
+
+## AI 助手功能
+
+平台集成了强大的 AI 助手功能，支持：
+
+- OpenAI (GPT-4/GPT-3.5)
+- Google Gemini
+- Anthropic Claude
+
+AI 助手可以：
+- 回答算法和数据结构相关问题
+- 解释代码的工作原理
+- 提供编程建议和最佳实践
+- 帮助调试和优化代码
+
+注意：使用 AI 助手功能需要配置相应的 API 密钥。
 
 ## 技术栈
 
@@ -17,6 +34,9 @@
 - React Router
 - Tailwind CSS
 - React Icons
+- React Markdown
+- Syntax Highlighter
+- OpenAI/Google/Claude API
 
 ## 项目结构
 
@@ -28,7 +48,11 @@ src/
 │   ├── Algorithms/
 │   │   └── Sorting/
 │   │       └── BubbleSort.tsx
+│   ├── AIChat/
+│   │   └── AIChat.tsx
 │   └── Layout.tsx
+├── services/
+│   └── configService.ts
 ├── pages/
 │   ├── Home.tsx
 │   ├── DataStructures.tsx
@@ -44,7 +68,7 @@ src/
 
 1. 克隆仓库：
    ```
-   git clone https://github.com/your-username/algorithm-visualizer.git
+   git clone https://github.com/suiyunzou/algorithm-visualizer.git
    ```
 
 2. 安装依赖：
@@ -53,27 +77,45 @@ src/
    npm install
    ```
 
-3. 运行开发服务器：
+3. 启动开发服务器：
    ```
    npm start
    ```
 
-4. 在浏览器中打开 `http://localhost:3000` 查看应用。
+4. 在浏览器中访问：
+   ```
+   http://localhost:3000
+   ```
 
-## 使用指南
+## AI 助手配置
 
-1. 在首页选择"探索数据结构"或"发现算法"
-2. 在侧边栏中选择具体的数据结构或算法
-3. 使用可视化界面和控制按钮来交互和学习
-4. 调整设置以自定义学习体验
+要使用 AI 助手功能，您需要：
 
-## 贡献
+1. 获取所需的 API 密钥：
+   - OpenAI API 密钥：https://platform.openai.com
+   - Google AI API 密钥：https://makersuite.google.com
+   - Claude API 密钥：https://console.anthropic.com
 
-欢迎贡献代码、报告问题或提出新功能建议。请先开 issue 讨论您想要改变或添加的内容。
+2. 在应用中配置：
+   - 点击 AI 助手界面右上角的设置图标
+   - 输入对应服务的 API 密钥
+   - 选择想要使用的 AI 模型
+
+注意：API 密钥仅保存在浏览器内存中，刷新页面后需要重新输入。
+
+## 贡献指南
+
+欢迎贡献代码！请遵循以下步骤：
+
+1. Fork 本仓库
+2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启一个 Pull Request
 
 ## 许可证
 
-[MIT](https://choosealicense.com/licenses/mit/)
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
 
 ## 界面预览
 
