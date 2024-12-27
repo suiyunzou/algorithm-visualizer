@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Route, Routes, useMatch, Link } from 'react-router-dom';
+import { Route, Routes, useMatch, Link, Outlet } from 'react-router-dom';
 import { FiSearch, FiChevronRight, FiSettings, FiBook, FiCode, FiCpu } from 'react-icons/fi';
 import Array from '../components/DataStructures/Array';
-// Import other data structure components here
 
 const DataStructures: React.FC = () => {
   const match = useMatch('/data-structures/*');
@@ -43,7 +42,7 @@ const DataStructures: React.FC = () => {
             <input
               type="text"
               placeholder="搜索数据结构..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -52,7 +51,7 @@ const DataStructures: React.FC = () => {
             {filteredDataStructures.map((ds) => (
               <li key={ds.path}>
                 <Link
-                  to={`${path}/${ds.path}`}
+                  to={ds.path}
                   className="block p-4 bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                 >
                   <div className="flex justify-between items-center">
@@ -88,33 +87,7 @@ const DataStructures: React.FC = () => {
               </div>
             </div>
           )}
-          <Routes>
-            <Route index element={
-              <div className="max-w-3xl mx-auto">
-                <h2 className="text-3xl font-semibold mb-6 text-blue-700">欢迎来到数据结构</h2>
-                <p className="text-gray-700 mb-6 text-lg">从侧边栏选择一个数据结构开始学习和可视化。每个数据结构都包含：</p>
-                <ul className="list-none space-y-4 mb-8">
-                  {[
-                    { text: '清晰的可视化和动画', icon: <FiCpu /> },
-                    { text: '逐步执行选项', icon: <FiCode /> },
-                    { text: '可调整的动画速度', icon: <FiSettings /> },
-                    { text: '自定义输入功能', icon: <FiBook /> },
-                    { text: '复杂度分析', icon: <FiChevronRight /> }
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-center bg-blue-50 p-3 rounded-lg">
-                      <span className="bg-blue-100 text-blue-700 rounded-full p-2 mr-4">
-                        {item.icon}
-                      </span>
-                      {item.text}
-                    </li>
-                  ))}
-                </ul>
-                <img src="/images/data-structures-intro.svg" alt="数据结构" className="mx-auto w-full max-w-lg rounded-lg shadow-lg" />
-              </div>
-            } />
-            <Route path="array" element={<Array />} />
-            {/* Add routes for other data structures */}
-          </Routes>
+          <Outlet />
         </main>
       </div>
     </div>

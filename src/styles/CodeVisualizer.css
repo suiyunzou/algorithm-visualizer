@@ -1,0 +1,31 @@
+.code-visualizer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.code-visualizer textarea {
+  font-family: monospace;
+  padding: 0.5rem;
+}
+
+.code-visualizer button {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.code-visualizer .output,
+.code-visualizer .result {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.code-visualizer pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

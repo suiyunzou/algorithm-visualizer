@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
 interface CodeDisplayProps {
   code: string;
   language: string;
+  currentLine: number;
 }
 
-const CodeDisplay: React.FC<CodeDisplayProps> = ({ code, language }) => {
-  React.useEffect(() => {
+const CodeDisplay: React.FC<CodeDisplayProps> = ({ code, language, currentLine }) => {
+  useEffect(() => {
     Prism.highlightAll();
-  }, [code]);
+  }, [code, currentLine]);
+
+  const lines = code.split('\n');
 
   return (
-    <pre>
-      <code className={`language-${language}`}>{code}</code>
+    <pre className="relative">
+      <code className={`language-${language}`}>
+        {lines.map((line, index) => (
+          <div 
+            key={index} 
+            className={`${index === currentLine ? 'bg-yellow-200' : ''}`}
+          >
+            {line}
+          </div>
+        ))}
+      </code>
     </pre>
   );
 };
