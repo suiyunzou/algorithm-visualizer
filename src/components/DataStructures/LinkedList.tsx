@@ -179,11 +179,18 @@ const LinkedList: React.FC = () => {
       complexity={{
         title: "性能分析",
         items: [
-          { operation: "头部插入/删除", timeComplexity: "O(1)" },
-          { operation: "尾部插入/删除", timeComplexity: "O(n)" },
-          { operation: "查找", timeComplexity: "O(n)" },
-          { operation: "按位置访问", timeComplexity: "O(n)" }
-        ]
+          { operation: "头部插入 (Prepend)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "在链表头部插入新节点" },
+          { operation: "尾部插入 (Append)", timeComplexity: "O(n)", spaceComplexity: "O(1)", description: "需要遍历到链表尾部" },
+          { operation: "指定位置插入 (Insert)", timeComplexity: "O(n)", spaceComplexity: "O(1)", description: "需要遍历到指定位置" },
+          { operation: "删除节点 (Delete)", timeComplexity: "O(n)", spaceComplexity: "O(1)", description: "需要遍历到目标节点" },
+          { operation: "搜索 (Search)", timeComplexity: "O(n)", spaceComplexity: "O(1)", description: "需要遍历链表查找目标值" }
+        ],
+        summary: {
+          bestCase: "O(1)",
+          averageCase: "O(n)",
+          worstCase: "O(n)",
+          spaceComplexity: "O(n)"
+        }
       }}
     />
   );

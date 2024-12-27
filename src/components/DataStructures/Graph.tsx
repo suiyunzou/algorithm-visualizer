@@ -186,11 +186,19 @@ const Graph: React.FC = () => {
       complexity={{
         title: "性能分析",
         items: [
-          { operation: "添加节点", timeComplexity: "O(1)" },
-          { operation: "添加边", timeComplexity: "O(1)" },
-          { operation: "删除节点", timeComplexity: "O(E)" },
-          { operation: "遍历", timeComplexity: "O(V + E)" }
-        ]
+          { operation: "添加顶点 (Add Vertex)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "直接添加新顶点" },
+          { operation: "添加边 (Add Edge)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "在邻接表中添加边" },
+          { operation: "删除顶点 (Remove Vertex)", timeComplexity: "O(V + E)", spaceComplexity: "O(1)", description: "需要删除所有相关边" },
+          { operation: "删除边 (Remove Edge)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "从邻接表中删除边" },
+          { operation: "深度优先搜索 (DFS)", timeComplexity: "O(V + E)", spaceComplexity: "O(V)", description: "访问所有顶点和边" },
+          { operation: "广度优先搜索 (BFS)", timeComplexity: "O(V + E)", spaceComplexity: "O(V)", description: "访问所有顶点和边" }
+        ],
+        summary: {
+          bestCase: "O(1)",
+          averageCase: "O(V + E)",
+          worstCase: "O(V + E)",
+          spaceComplexity: "O(V + E)"
+        }
       }}
     />
   );

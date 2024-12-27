@@ -101,11 +101,17 @@ const Queue: React.FC = () => {
       complexity={{
         title: "性能分析",
         items: [
-          { operation: "入队", timeComplexity: "O(1)" },
-          { operation: "出队", timeComplexity: "O(1)" },
-          { operation: "查看队首", timeComplexity: "O(1)" },
-          { operation: "判空", timeComplexity: "O(1)" }
-        ]
+          { operation: "入队 (Enqueue)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "在队尾添加元素" },
+          { operation: "出队 (Dequeue)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "移除队首元素" },
+          { operation: "查看队首 (Peek)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "访问队首元素" },
+          { operation: "判空", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "检查队列状态" }
+        ],
+        summary: {
+          bestCase: "O(1)",
+          averageCase: "O(1)",
+          worstCase: "O(1)",
+          spaceComplexity: "O(n)"
+        }
       }}
     />
   );

@@ -121,11 +121,17 @@ const BinaryTree: React.FC = () => {
       complexity={{
         title: "性能分析",
         items: [
-          { operation: "查找", timeComplexity: "O(h)" },
-          { operation: "插入", timeComplexity: "O(h)" },
-          { operation: "删除", timeComplexity: "O(h)" },
-          { operation: "遍历", timeComplexity: "O(n)" }
-        ]
+          { operation: "插入 (Insert)", timeComplexity: "O(log n)", spaceComplexity: "O(1)", description: "平衡树的情况下，每次比较后树高减半" },
+          { operation: "删除 (Delete)", timeComplexity: "O(log n)", spaceComplexity: "O(1)", description: "需要找到并重新连接节点" },
+          { operation: "搜索 (Search)", timeComplexity: "O(log n)", spaceComplexity: "O(1)", description: "每次比较后排除一半节点" },
+          { operation: "遍历 (Traversal)", timeComplexity: "O(n)", spaceComplexity: "O(h)", description: "需要访问所有节点，h为树高" }
+        ],
+        summary: {
+          bestCase: "O(log n)",
+          averageCase: "O(log n)",
+          worstCase: "O(n)",
+          spaceComplexity: "O(n)"
+        }
       }}
     />
   );

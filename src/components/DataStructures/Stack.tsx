@@ -101,11 +101,17 @@ const Stack: React.FC = () => {
       complexity={{
         title: "性能分析",
         items: [
-          { operation: "压栈", timeComplexity: "O(1)" },
-          { operation: "出栈", timeComplexity: "O(1)" },
-          { operation: "查看栈顶", timeComplexity: "O(1)" },
-          { operation: "判空", timeComplexity: "O(1)" }
-        ]
+          { operation: "入栈 (Push)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "在栈顶添加元素" },
+          { operation: "出栈 (Pop)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "移除栈顶元素" },
+          { operation: "查看栈顶 (Peek)", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "访问栈顶元素" },
+          { operation: "判空/判满", timeComplexity: "O(1)", spaceComplexity: "O(1)", description: "检查栈的状态" }
+        ],
+        summary: {
+          bestCase: "O(1)",
+          averageCase: "O(1)",
+          worstCase: "O(1)",
+          spaceComplexity: "O(n)"
+        }
       }}
     />
   );
