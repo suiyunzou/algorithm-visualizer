@@ -27,6 +27,27 @@ const Layout: React.FC = () => {
         onMouseEnter={() => setSidebarOpen(true)}
         onMouseLeave={() => setSidebarOpen(false)}
       >
+        {/* Logo */}
+        <div className="flex items-center justify-center mb-6">
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/logo.svg" 
+              alt="Algorithm Visualizer" 
+              className={`
+                w-8 h-8 transition-all duration-300
+                ${sidebarOpen ? 'mr-3' : ''}
+              `}
+            />
+            <span className={`
+              font-semibold text-lg
+              ${sidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'} 
+              transition-all duration-300 whitespace-nowrap overflow-hidden
+            `}>
+              算法可视化
+            </span>
+          </Link>
+        </div>
+
         <nav className="space-y-3">
           {navItems.map((item) => (
             <Link

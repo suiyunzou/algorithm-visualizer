@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景圆形 -->
+    <circle cx="16" cy="16" r="15" fill="#4A90E2"/>
+    
+    <!-- 算法可视化图形：代表排序的条形 -->
+    <rect x="8" y="8" width="3" height="16" fill="white"/>
+    <rect x="13" y="12" width="3" height="12" fill="white"/>
+    <rect x="18" y="6" width="3" height="18" fill="white"/>
+    <rect x="23" y="10" width="3" height="14" fill="white"/>
+    
+    <!-- 连接线，代表算法的流动性 -->
+    <path d="M9.5 16 H22.5" stroke="white" stroke-width="1" stroke-dasharray="2 2"/>
+</svg>
