@@ -11,6 +11,7 @@ import Queue from './components/DataStructures/Queue';
 import BinaryTree from './components/DataStructures/BinaryTree';
 import Graph from './components/DataStructures/Graph';
 import HashTable from './components/DataStructures/HashTable';
+import AIChatLayout from './components/AIChat/AIChatLayout';
 
 const App: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const App: React.FC = () => {
             <Route path="graph" element={<Graph />} />
             <Route path="hash-table" element={<HashTable />} />
           </Route>
+          <Route path="ai-chat" element={<AIChatLayout />} />
         </Route>
       </Routes>
     </Router>

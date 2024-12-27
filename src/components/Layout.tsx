@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FiMenu, FiX, FiHome, FiCpu, FiCode, FiGithub } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiCpu, FiCode, FiGithub, FiMessageSquare } from 'react-icons/fi';
 
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -10,6 +10,7 @@ const Layout: React.FC = () => {
     { path: '/', icon: <FiHome />, text: '首页' },
     { path: '/data-structures', icon: <FiCpu />, text: '数据结构' },
     { path: '/algorithms', icon: <FiCode />, text: '算法' },
+    { path: '/ai-chat', icon: <FiMessageSquare />, text: 'AI 助手' },
   ];
 
   return (
